@@ -1,15 +1,15 @@
 cabal-version:      2.4
-name:               aoc2022
+name:               aoc2023
 version:            0.1.0.0
 
 -- A short (one-line) description of the package.
-synopsis: Loves solutions for advent of code 2022
+synopsis: Loves solutions for advent of code 2023
 
 -- A longer description of the package.
 -- description:
 
 -- A URL where users can report bugs.
-bug-reports: https://github.com/lovelyckaro/AOC2022/issues
+bug-reports: https://github.com/lovelyckaro/aoc2023/issues
 
 -- The license under which the package is released.
 -- license:
@@ -32,6 +32,7 @@ library
     tagsoup,
     vector,
     megaparsec,
+    replace-megaparsec,
     pretty-simple,
     pandoc
   default-language: GHC2021
@@ -41,7 +42,7 @@ executable fetch
   ghc-options: -interactive-print Text.Pretty.Simple.pPrint
   build-depends:
     base >= 4,
-    aoc2022,
+    aoc2023,
     pretty-simple
   hs-source-dirs: app
   default-language: GHC2021
@@ -51,7 +52,7 @@ executable submit
   ghc-options: -interactive-print Text.Pretty.Simple.pPrint
   build-depends:
     base >= 4,
-    aoc2022,
+    aoc2023,
     pretty-simple
   hs-source-dirs: app
   default-language: GHC2021
@@ -60,13 +61,13 @@ executable day1
     main-is: Day01.hs
     ghc-options: -interactive-print Text.Pretty.Simple.pPrint
     build-depends:
-      base >= 4.16.0.0,
+      base >= 4.17.0.0,
       containers,
       megaparsec,
       unordered-containers,
       text,
       vector,
-      aoc2022,
+      aoc2023,
       split,
       mtl,
       pretty-simple
@@ -76,13 +77,13 @@ executable day2
     main-is: Day02.hs
     ghc-options: -interactive-print Text.Pretty.Simple.pPrint
     build-depends:
-      base >= 4.16.0.0,
+      base >= 4.17.0.0,
       containers,
       megaparsec,
       unordered-containers,
       text,
       vector,
-      aoc2022,
+      aoc2023,
       split,
       mtl,
       pretty-simple
@@ -92,13 +93,13 @@ executable day3
     main-is: Day03.hs
     ghc-options: -interactive-print Text.Pretty.Simple.pPrint
     build-depends:
-      base >= 4.16.0.0,
+      base >= 4.17.0.0,
       containers,
       megaparsec,
       unordered-containers,
       text,
       vector,
-      aoc2022,
+      aoc2023,
       split,
       mtl,
       pretty-simple
@@ -108,13 +109,13 @@ executable day4
     main-is: Day04.hs
     ghc-options: -interactive-print Text.Pretty.Simple.pPrint
     build-depends:
-      base >= 4.16.0.0,
+      base >= 4.17.0.0,
       containers,
       megaparsec,
       unordered-containers,
       text,
       vector,
-      aoc2022,
+      aoc2023,
       split,
       mtl,
       pretty-simple
@@ -124,13 +125,13 @@ executable day5
     main-is: Day05.hs
     ghc-options: -interactive-print Text.Pretty.Simple.pPrint
     build-depends:
-      base >= 4.16.0.0,
+      base >= 4.17.0.0,
       containers,
       megaparsec,
       unordered-containers,
       text,
       vector,
-      aoc2022,
+      aoc2023,
       split,
       mtl,
       pretty-simple,
@@ -141,13 +142,13 @@ executable day6
     main-is: Day06.hs
     ghc-options: -interactive-print Text.Pretty.Simple.pPrint
     build-depends:
-      base >= 4.16.0.0,
+      base >= 4.17.0.0,
       containers,
       megaparsec,
       unordered-containers,
       text,
       vector,
-      aoc2022,
+      aoc2023,
       split,
       mtl,
       pretty-simple
@@ -157,13 +158,13 @@ executable day7
     main-is: Day07.hs
     ghc-options: -interactive-print Text.Pretty.Simple.pPrint
     build-depends:
-      base >= 4.16.0.0,
+      base >= 4.17.0.0,
       containers,
       megaparsec,
       unordered-containers,
       text,
       vector,
-      aoc2022,
+      aoc2023,
       split,
       mtl,
       pretty-simple
@@ -173,13 +174,13 @@ executable day8
     main-is: Day08.hs
     ghc-options: -interactive-print Text.Pretty.Simple.pPrint
     build-depends:
-      base >= 4.16.0.0,
+      base >= 4.17.0.0,
       containers,
       megaparsec,
       unordered-containers,
       text,
       vector,
-      aoc2022,
+      aoc2023,
       split,
       mtl,
       pretty-simple
@@ -189,13 +190,13 @@ executable day9
     main-is: Day09.hs
     ghc-options: -interactive-print Text.Pretty.Simple.pPrint
     build-depends:
-      base >= 4.16.0.0,
+      base >= 4.17.0.0,
       containers,
       megaparsec,
       unordered-containers,
       text,
       vector,
-      aoc2022,
+      aoc2023,
       split,
       mtl,
       pretty-simple
@@ -205,13 +206,13 @@ executable day10
     main-is: Day10.hs
     ghc-options: -interactive-print Text.Pretty.Simple.pPrint
     build-depends:
-      base >= 4.16.0.0,
+      base >= 4.17.0.0,
       containers,
       megaparsec,
       unordered-containers,
       text,
       vector,
-      aoc2022,
+      aoc2023,
       split,
       mtl,
       pretty-simple
@@ -221,13 +222,13 @@ executable day11
     main-is: Day11.hs
     ghc-options: -interactive-print Text.Pretty.Simple.pPrint
     build-depends:
-      base >= 4.16.0.0,
+      base >= 4.17.0.0,
       containers,
       megaparsec,
       unordered-containers,
       text,
       vector,
-      aoc2022,
+      aoc2023,
       split,
       mtl,
       pretty-simple
@@ -237,13 +238,13 @@ executable day12
     main-is: Day12.hs
     ghc-options: -interactive-print Text.Pretty.Simple.pPrint
     build-depends:
-      base >= 4.16.0.0,
+      base >= 4.17.0.0,
       containers,
       megaparsec,
       unordered-containers,
       text,
       vector,
-      aoc2022,
+      aoc2023,
       split,
       mtl,
       pretty-simple,
@@ -254,13 +255,13 @@ executable day13
     main-is: Day13.hs
     ghc-options: -interactive-print Text.Pretty.Simple.pPrint
     build-depends:
-      base >= 4.16.0.0,
+      base >= 4.17.0.0,
       containers,
       megaparsec,
       unordered-containers,
       text,
       vector,
-      aoc2022,
+      aoc2023,
       split,
       mtl,
       pretty-simple
@@ -270,13 +271,13 @@ executable day14
     main-is: Day14.hs
     ghc-options: -interactive-print Text.Pretty.Simple.pPrint
     build-depends:
-      base >= 4.16.0.0,
+      base >= 4.17.0.0,
       containers,
       megaparsec,
       unordered-containers,
       text,
       vector,
-      aoc2022,
+      aoc2023,
       split,
       mtl,
       pretty-simple
@@ -286,13 +287,13 @@ executable day15
     main-is: Day15.hs
     ghc-options: -interactive-print Text.Pretty.Simple.pPrint
     build-depends:
-      base >= 4.16.0.0,
+      base >= 4.17.0.0,
       containers,
       megaparsec,
       unordered-containers,
       text,
       vector,
-      aoc2022,
+      aoc2023,
       split,
       mtl,
       pretty-simple,
@@ -303,13 +304,13 @@ executable day16
     main-is: Day16.hs
     ghc-options: -interactive-print Text.Pretty.Simple.pPrint
     build-depends:
-      base >= 4.16.0.0,
+      base >= 4.17.0.0,
       containers,
       megaparsec,
       unordered-containers,
       text,
       vector,
-      aoc2022,
+      aoc2023,
       split,
       mtl,
       pretty-simple
@@ -319,13 +320,13 @@ executable day17
     main-is: Day17.hs
     ghc-options: -interactive-print Text.Pretty.Simple.pPrint
     build-depends:
-      base >= 4.16.0.0,
+      base >= 4.17.0.0,
       containers,
       megaparsec,
       unordered-containers,
       text,
       vector,
-      aoc2022,
+      aoc2023,
       split,
       mtl,
       hashable,
@@ -337,13 +338,13 @@ executable day18
     main-is: Day18.hs
     ghc-options: -interactive-print Text.Pretty.Simple.pPrint
     build-depends:
-      base >= 4.16.0.0,
+      base >= 4.17.0.0,
       containers,
       megaparsec,
       unordered-containers,
       text,
       vector,
-      aoc2022,
+      aoc2023,
       split,
       mtl,
       fgl,
@@ -354,13 +355,13 @@ executable day19
     main-is: Day19.hs
     ghc-options: -interactive-print Text.Pretty.Simple.pPrint -threaded -feager-blackholing
     build-depends:
-      base >= 4.16.0.0,
+      base >= 4.17.0.0,
       containers,
       megaparsec,
       unordered-containers,
       text,
       vector,
-      aoc2022,
+      aoc2023,
       split,
       mtl,
       pretty-simple,
@@ -371,13 +372,13 @@ executable day20
     main-is: Day20.hs
     ghc-options: -interactive-print Text.Pretty.Simple.pPrint
     build-depends:
-      base >= 4.16.0.0,
+      base >= 4.17.0.0,
       containers,
       megaparsec,
       unordered-containers,
       text,
       vector,
-      aoc2022,
+      aoc2023,
       split,
       mtl,
       pretty-simple
@@ -387,13 +388,13 @@ executable day21
     main-is: Day21.hs
     ghc-options: -interactive-print Text.Pretty.Simple.pPrint
     build-depends:
-      base >= 4.16.0.0,
+      base >= 4.17.0.0,
       containers,
       megaparsec,
       unordered-containers,
       text,
       vector,
-      aoc2022,
+      aoc2023,
       split,
       mtl,
       pretty-simple,
@@ -404,13 +405,13 @@ executable day22
     main-is: Day22.hs
     ghc-options: -interactive-print Text.Pretty.Simple.pPrint
     build-depends:
-      base >= 4.16.0.0,
+      base >= 4.17.0.0,
       containers,
       megaparsec,
       unordered-containers,
       text,
       vector,
-      aoc2022,
+      aoc2023,
       split,
       mtl,
       pretty-simple
@@ -420,13 +421,13 @@ executable day23
     main-is: Day23.hs
     ghc-options: -interactive-print Text.Pretty.Simple.pPrint
     build-depends:
-      base >= 4.16.0.0,
+      base >= 4.17.0.0,
       containers,
       megaparsec,
       unordered-containers,
       text,
       vector,
-      aoc2022,
+      aoc2023,
       split,
       mtl,
       pretty-simple
@@ -436,13 +437,13 @@ executable day24
     main-is: Day24.hs
     ghc-options: -interactive-print Text.Pretty.Simple.pPrint
     build-depends:
-      base >= 4.16.0.0,
+      base >= 4.17.0.0,
       containers,
       megaparsec,
       unordered-containers,
       text,
       vector,
-      aoc2022,
+      aoc2023,
       split,
       mtl,
       pretty-simple
@@ -452,13 +453,13 @@ executable day25
     main-is: Day25.hs
     ghc-options: -interactive-print Text.Pretty.Simple.pPrint
     build-depends:
-      base >= 4.16.0.0,
+      base >= 4.17.0.0,
       containers,
       megaparsec,
       unordered-containers,
       text,
       vector,
-      aoc2022,
+      aoc2023,
       split,
       mtl,
       pretty-simple

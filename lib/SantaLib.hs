@@ -87,7 +87,7 @@ submitAnswer day part = do
   TIO.putStrLn response
   print result
 
-putAnswer :: Show a => Integer -> Part -> a -> IO ()
+putAnswer :: (Show a) => Integer -> Part -> a -> IO ()
 putAnswer day part = writeFile fp . show
   where
     fp = case part of
@@ -95,7 +95,7 @@ putAnswer day part = writeFile fp . show
       Part2 -> "answer/day" <> show day <> "-part2"
 
 -- Common, useful algorithms:
-readText :: Read a => Text -> a
+readText :: (Read a) => Text -> a
 readText = read . T.unpack
 
 -- | Find connected subgraph given initial point and function handling neighbors

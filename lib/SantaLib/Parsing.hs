@@ -67,7 +67,7 @@ symbolSp = L.symbol (void . optional . char $ ' ')
 filterNums :: String -> [Int]
 filterNums = map read . filter (all isNumber) . groupBy ((==) `on` isNumber)
 
-signed :: Num n => Parser n -> Parser n
+signed :: (Num n) => Parser n -> Parser n
 signed = L.signed space
 
 parseIO :: Parser a -> FilePath -> String -> IO a
