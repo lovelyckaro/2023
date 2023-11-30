@@ -17,6 +17,7 @@ module SantaLib.Parsing
     indented,
     aligned,
     L.nonIndented,
+    lineSepNumbers,
   )
 where
 
@@ -83,3 +84,8 @@ indented ref p = do
 
 aligned :: Pos -> Parser a -> Parser a
 aligned ref p = L.indentGuard space EQ ref >> p
+
+-- * Specific parsers for common patterns
+
+lineSepNumbers :: (Num n) => Parser [n]
+lineSepNumbers = some (L.lexeme (void eol <|> eof) L.decimal)

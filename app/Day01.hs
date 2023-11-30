@@ -3,8 +3,8 @@ module Main where
 import SantaLib
 import SantaLib.Parsing
 
-pInp :: Parser ()
-pInp = return ()
+pInp :: Parser [[Int]]
+pInp = lineSepNumbers `sepBy` eol
 
 part1 = id
 
