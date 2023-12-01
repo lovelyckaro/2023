@@ -1,44 +1,33 @@
 module Main where
 
-import Data.Char
+import Control.Monad
+import Data.List
+import Data.Map (Map, (!))
 import Data.Map qualified as M
-import Replace.Megaparsec
 import SantaLib
-import SantaLib.Parsing
 
-pDigit :: Parser Integer
-pDigit = do
-  d <- digitChar
-  return (read [d])
-
-digits :: [(String, Integer)]
-digits = zip ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"] [1 ..]
-
-pSpelledOutDigit :: Parser Integer
-pSpelledOutDigit = choice $ map (\(spelling, digit) -> digit <$ try (string spelling)) digits
-
-pSpelledOutBackwardsDigit :: Parser Integer
-pSpelledOutBackwardsDigit = choice $ map (\(spelling, digit) -> digit <$ try (string (reverse spelling))) digits
-
-firstlastdigit :: String -> Integer
-firstlastdigit str = read [head digits, last digits]
+pDigits :: Map String Integer -> String -> [Integer]
+pDigits digitTable line = [toNum digit | slice <- tails line, digit <- digits, digit `isPrefixOf` slice]
   where
-    digits = filter isDigit str
+    toNum n = digitTable ! n
+    digits = M.keys digitTable
+
+digits1 :: Map String Integer
+digits1 = M.fromList [(show n, n) | n <- [1 .. 9]]
+
+digits2 :: Map String Integer
+digits2 = digits1 `M.union` M.fromList (zip ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"] [1 .. 9])
+
+firstlastdigit :: Map String Integer -> String -> Integer
+firstlastdigit digitTable str = head digits * 10 + last digits
+  where
+    digits = pDigits digitTable str
 
 part1 :: String -> Integer
-part1 = sum . map firstlastdigit . lines
+part1 = sum . map (firstlastdigit digits1) . lines
 
-firstlastdigit2 :: String -> Integer
-firstlastdigit2 line = firstdigit * 10 + lastdigit
-  where
-    pFirst = pDigit <|> pSpelledOutDigit
-    pLast = pDigit <|> pSpelledOutBackwardsDigit
-    Just (_prefix, firstdigit, rest) = breakCap pFirst line
-    (_suffix, lastdigit, _middle) = case breakCap pLast (reverse rest) of
-      Nothing -> (undefined, firstdigit, undefined)
-      Just x -> x
-
-part2 = sum . map firstlastdigit2 . lines
+part2 :: String -> Integer
+part2 = sum . map (firstlastdigit digits2) . lines
 
 main :: IO ()
 main = do
