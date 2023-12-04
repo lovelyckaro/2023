@@ -1,14 +1,40 @@
 module Main where
 
+import Data.Bifunctor
+import Data.Map (Map)
+import Data.Map qualified as M
+import Data.Set (Set)
+import Data.Set qualified as S
 import SantaLib
 import SantaLib.Parsing
 
-pInp :: Parser ()
-pInp = return ()
+pInp :: Parser [(Set Int, Set Int)]
+pInp = some $ lexemeLn $ do
+  symbol "Card"
+  _id <- lexeme decimal
+  symbol ":"
+  winning <- some (lexeme decimal)
+  symbol "|"
+  gotten <- some (lexeme decimal)
+  return (S.fromList winning, S.fromList gotten)
 
-part1 = id
+matches :: [(Set Int, Set Int)] -> [Int]
+matches = map (S.size . uncurry S.intersection)
 
-part2 = id
+play :: [Int] -> [Int]
+play = go . map (,1)
+  where
+    go :: [(Int, Int)] -> [Int]
+    go [] = []
+    go ((match, occs) : rest) =
+      let (matched, rest') = splitAt match rest
+       in occs : go (map (second (+ occs)) matched <> rest')
+
+part1 :: [(Set Int, Set Int)] -> Integer
+part1 = sum . map ((2 ^) . pred) . filter (> 0) . matches
+
+part2 :: [(Set Int, Set Int)] -> Int
+part2 = sum . play . matches
 
 main :: IO ()
 main = do
