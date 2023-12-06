@@ -33,8 +33,8 @@ part1 = product . map waysToBeatRace
 part2 :: [(Int, Int)] -> Int
 part2 tups = length $ filter (> combDist) $ distances combTime
   where
-    combTime = read $ foldl (\x y -> x ++ show y) "" $ map fst tups
-    combDist = read $ foldl (\x y -> x ++ show y) "" $ map snd tups
+    combTime = read $ concatMap (show . fst) tups
+    combDist = read $ concatMap (show . snd) tups
     combinedRace = (combTime, combDist)
 
 main :: IO ()
