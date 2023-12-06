@@ -4,8 +4,6 @@
 module Main where
 
 import Data.Either (lefts, rights)
-import Data.IntMap (IntMap)
-import Data.IntMap qualified as IM
 import Data.List.Split (chunksOf)
 import SantaLib
 import SantaLib.Parsing
