@@ -1,14 +1,41 @@
+{-# LANGUAGE OverloadedRecordDot #-}
+
 module Main where
 
+import Data.Function (on)
+import Data.List (nubBy)
 import SantaLib
 import SantaLib.Parsing
 
-pInp :: Parser ()
-pInp = return ()
+pInp :: Parser [(Int, Int)]
+pInp = do
+  symbol "Time:"
+  times <- lexemeLn $ some $ lexeme decimal
+  symbol "Distance:"
+  distances <- lexemeLn $ some $ lexeme decimal
+  return $ zip times distances
 
-part1 = id
+calcDistance :: Int -> Int -> Int
+calcDistance speed time = speed * time
 
-part2 = id
+timeSplits :: Int -> [(Int, Int)]
+timeSplits n = [(gassing, going) | gassing <- [1 .. n], let going = n - gassing]
+
+distances :: Int -> [Int]
+distances time = map (uncurry calcDistance) $ timeSplits time
+
+waysToBeatRace :: (Int, Int) -> Int
+waysToBeatRace (time, dist) = length $ filter (> dist) $ distances time
+
+part1 :: [(Int, Int)] -> Int
+part1 = product . map waysToBeatRace
+
+part2 :: [(Int, Int)] -> Int
+part2 tups = length $ filter (> combDist) $ distances combTime
+  where
+    combTime = read $ foldl (\x y -> x ++ show y) "" $ map fst tups
+    combDist = read $ foldl (\x y -> x ++ show y) "" $ map snd tups
+    combinedRace = (combTime, combDist)
 
 main :: IO ()
 main = do
