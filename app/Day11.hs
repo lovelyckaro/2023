@@ -50,8 +50,6 @@ part1 nodes = (`div` 2) . sum $ do
   node <- nodes
   minDistsFrom node nodes
 
-part2 = id
-
 main :: IO ()
 main = do
   inp <- getInput 11
