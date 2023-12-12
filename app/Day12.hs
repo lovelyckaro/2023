@@ -13,7 +13,9 @@ import SantaLib.Parsing hiding (State)
 data SpringToken = Broken | Operational | Unknown
   deriving (Show, Eq, Ord)
 
-pRow :: Parser ([SpringToken], [Int])
+type SpringInfo = ([SpringToken], [Int])
+
+pRow :: Parser SpringInfo
 pRow = do
   tokens <- some (Unknown <$ char '?' <|> Operational <$ char '#' <|> Broken <$ char '.')
   space
@@ -23,44 +25,31 @@ pRow = do
 pInp :: Parser [([SpringToken], [Int])]
 pInp = some (lexemeLn pRow) <* eof
 
-numSats :: ([SpringToken], [Either Int Int]) -> Int
-numSats ([], []) = 1
-numSats ([], [Left 0]) = 1
-numSats ([], sizes) = 0
-numSats (Broken : rest, Left 0 : sizes) = numSats (rest, sizes)
-numSats (Broken : rest, Left n : sizes) = 0
-numSats (Broken : rest, sizes) = numSats (rest, sizes)
-numSats (Operational : rest, []) = 0
-numSats (Operational : rest, Left 0 : sizes) = 0
-numSats (Operational : rest, Left size : sizes) = numSats (rest, Left (size - 1) : sizes)
-numSats (Operational : rest, Right size : sizes) = numSats (rest, Left (size - 1) : sizes)
-numSats (Unknown : rest, sizes) = numSats (Broken : rest, sizes) + numSats (Operational : rest, sizes)
-
-numSats2 :: ([SpringToken], [Either Int Int]) -> State (Map ([SpringToken], [Either Int Int]) Int) Int
-numSats2 inp = do
-  gets (M.lookup inp) >>= \case
+numSats2 :: SpringInfo -> Maybe Int -> State (Map (SpringInfo, Maybe Int) Int) Int
+numSats2 inp curr = do
+  gets (M.lookup (inp, curr)) >>= \case
     Just i -> return i
     Nothing -> do
-      val <- case inp of
-        ([], []) -> return 1
-        ([], [Left 0]) -> return 1
-        ([], sizes) -> return 0
-        (Broken : rest, Left 0 : sizes) -> numSats2 (rest, sizes)
-        (Broken : rest, Left n : sizes) -> return 0
-        (Broken : rest, sizes) -> numSats2 (rest, sizes)
-        (Operational : rest, []) -> return 0
-        (Operational : rest, Left 0 : sizes) -> return 0
-        (Operational : rest, Left size : sizes) -> numSats2 (rest, Left (size - 1) : sizes)
-        (Operational : rest, Right size : sizes) -> numSats2 (rest, Left (size - 1) : sizes)
-        (Unknown : rest, sizes) -> (+) <$> numSats2 (Broken : rest, sizes) <*> numSats2 (Operational : rest, sizes)
-      modify (M.insert inp val)
+      val <- case (inp, curr) of
+        (([], []), Nothing) -> return 1
+        (([], []), Just 0) -> return 1
+        (([], sizes), _) -> return 0
+        ((Broken : rest, sizes), Just 0) -> numSats2 (rest, sizes) Nothing
+        ((Broken : rest, sizes), Just _) -> return 0
+        ((Broken : rest, sizes), Nothing) -> numSats2 (rest, sizes) Nothing
+        ((Operational : rest, []), Nothing) -> return 0
+        ((Operational : rest, sizes), Just 0) -> return 0
+        ((Operational : rest, sizes), Just size) -> numSats2 (rest, sizes) (Just (size - 1))
+        ((Operational : rest, size : sizes), Nothing) -> numSats2 (rest, sizes) (Just (size - 1))
+        ((Unknown : rest, sizes), curr) -> (+) <$> numSats2 (Broken : rest, sizes) curr <*> numSats2 (Operational : rest, sizes) curr
+      modify (M.insert (inp, curr) val)
       return val
 
 unfold :: ([SpringToken], [Int]) -> ([SpringToken], [Int])
 unfold (tokens, sizes) = (foldl1 (\a b -> a <> (Unknown : b)) (replicate 5 tokens), concat $ replicate 5 sizes)
 
 part1 :: [([SpringToken], [Int])] -> Int
-part1 = sum . (`evalState` M.empty) . mapM (numSats2 . second (map Right))
+part1 = sum . (`evalState` M.empty) . mapM (`numSats2` Nothing)
 
 part2 :: [([SpringToken], [Int])] -> Int
 part2 = part1 . map unfold
