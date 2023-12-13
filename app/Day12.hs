@@ -25,8 +25,8 @@ pRow = do
 pInp :: Parser [([SpringToken], [Int])]
 pInp = some (lexemeLn pRow) <* eof
 
-numSats2 :: SpringInfo -> Maybe Int -> State (Map (SpringInfo, Maybe Int) Int) Int
-numSats2 inp curr = do
+numSats :: SpringInfo -> Maybe Int -> State (Map (SpringInfo, Maybe Int) Int) Int
+numSats inp curr = do
   gets (M.lookup (inp, curr)) >>= \case
     Just i -> return i
     Nothing -> do
@@ -34,14 +34,14 @@ numSats2 inp curr = do
         (([], []), Nothing) -> return 1
         (([], []), Just 0) -> return 1
         (([], sizes), _) -> return 0
-        ((Broken : rest, sizes), Just 0) -> numSats2 (rest, sizes) Nothing
+        ((Broken : rest, sizes), Just 0) -> numSats (rest, sizes) Nothing
         ((Broken : rest, sizes), Just _) -> return 0
-        ((Broken : rest, sizes), Nothing) -> numSats2 (rest, sizes) Nothing
+        ((Broken : rest, sizes), Nothing) -> numSats (rest, sizes) Nothing
         ((Operational : rest, []), Nothing) -> return 0
         ((Operational : rest, sizes), Just 0) -> return 0
-        ((Operational : rest, sizes), Just size) -> numSats2 (rest, sizes) (Just (size - 1))
-        ((Operational : rest, size : sizes), Nothing) -> numSats2 (rest, sizes) (Just (size - 1))
-        ((Unknown : rest, sizes), curr) -> (+) <$> numSats2 (Broken : rest, sizes) curr <*> numSats2 (Operational : rest, sizes) curr
+        ((Operational : rest, sizes), Just size) -> numSats (rest, sizes) (Just (size - 1))
+        ((Operational : rest, size : sizes), Nothing) -> numSats (rest, sizes) (Just (size - 1))
+        ((Unknown : rest, sizes), curr) -> (+) <$> numSats (Broken : rest, sizes) curr <*> numSats (Operational : rest, sizes) curr
       modify (M.insert (inp, curr) val)
       return val
 
@@ -49,7 +49,7 @@ unfold :: ([SpringToken], [Int]) -> ([SpringToken], [Int])
 unfold (tokens, sizes) = (foldl1 (\a b -> a <> (Unknown : b)) (replicate 5 tokens), concat $ replicate 5 sizes)
 
 part1 :: [([SpringToken], [Int])] -> Int
-part1 = sum . (`evalState` M.empty) . mapM (`numSats2` Nothing)
+part1 = sum . (`evalState` M.empty) . mapM (`numSats` Nothing)
 
 part2 :: [([SpringToken], [Int])] -> Int
 part2 = part1 . map unfold
