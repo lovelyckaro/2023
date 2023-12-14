@@ -1,12 +1,9 @@
-{-# LANGUAGE OverloadedRecordDot #-}
-
 module Main where
 
-import Control.Monad
 import Data.Either
 import Data.Foldable (find)
 import Data.List
-import Replace.Megaparsec (sepCap, splitCap)
+import Replace.Megaparsec (splitCap)
 import SantaLib
 import SantaLib.Parsing
 
@@ -57,6 +54,7 @@ score2 graph = case reflectionCol2 graph of
 part1 :: [[String]] -> Int
 part1 = sum . map score
 
+part2 :: [[String]] -> Int
 part2 = sum . map score2
 
 main :: IO ()
