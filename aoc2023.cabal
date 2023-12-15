@@ -312,7 +312,8 @@ executable day15
       split,
       mtl,
       pretty-simple,
-      sbv
+      sbv,
+      ordered-containers
     hs-source-dirs: app
     default-language: GHC2021
 executable day16
