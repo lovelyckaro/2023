@@ -349,7 +349,8 @@ executable day17
       mtl,
       hashable,
       unordered-containers,
-      pretty-simple
+      pretty-simple,
+      search-algorithms
     hs-source-dirs: app
     default-language: GHC2021
 executable day18
