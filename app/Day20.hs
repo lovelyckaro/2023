@@ -7,12 +7,14 @@ import Data.Map (Map, (!), (!?))
 import Data.Map qualified as M
 import Data.Sequence (Seq (..))
 import Data.Sequence qualified as Seq
+import Data.Set (Set)
+import Data.Set qualified as S
 import SantaLib
 import SantaLib.Parsing hiding (State)
 import Prelude hiding (flip)
 
 data Pulse = Low | High
-  deriving (Show, Eq)
+  deriving (Show, Eq, Ord)
 
 data FlipFlopState = On | Off
   deriving (Show)
@@ -66,7 +68,7 @@ data SystemState = SystemState
   { signalQueue :: Seq (String, Pulse, String),
     modules :: Map String Module,
     numLow, numHigh :: Int,
-    rxPresses :: Int
+    signalsSeen :: Set (String, Pulse, String)
   }
   deriving (Show)
 
@@ -80,7 +82,7 @@ initSystemState modules =
       modules = modules,
       numLow = 0,
       numHigh = 0,
-      rxPresses = 0
+      signalsSeen = S.empty
     }
 
 flip :: Module -> Module
@@ -98,7 +100,7 @@ popQueue =
       case pulse of
         High -> modify $ \s -> s {numHigh = numHigh s + 1}
         Low -> modify $ \s -> s {numLow = numLow s + 1}
-      modify $ \s -> s {signalQueue = rest}
+      modify $ \s -> s {signalQueue = rest, signalsSeen = S.insert signal (signalsSeen s)}
       return $ Just signal
 
 modifyModule :: String -> (Module -> Module) -> State SystemState ()
@@ -122,8 +124,7 @@ tick = do
     Nothing -> return ()
     Just (from, pulse, to) ->
       gets ((!? to) . modules) >>= \case
-        Nothing ->
-          when (pulse == Low && to == "rx") $ modify $ \s -> s {rxPresses = rxPresses s + 1}
+        Nothing -> return ()
         Just (Broadcaster outs) ->
           queue $ Seq.fromList $ map (to,pulse,) outs
         Just (FlipFlop state outs) ->
@@ -151,18 +152,38 @@ pressButton = do
   queue (Seq.singleton ("button", Low, "broadcaster"))
   run
 
-untilRxPressed :: State SystemState ()
-untilRxPressed = do
-  gets rxPresses >>= \case
-    0 -> pressButton >> untilRxPressed
-    n -> return ()
-
 part1 :: Map String Module -> Int
 part1 modules =
   let finalState = execState (populateConjunctionInputs >> replicateM_ 1000 pressButton) $ initSystemState modules
    in numLow finalState * numHigh finalState
 
-part2 = execState (populateConjunctionInputs >> untilRxPressed) . initSystemState
+-- lets hard code the shit out of part 2
+-- First high is sent to "rx" from "cl" when "dt", "js", "qs" and "ts" are high at the same time
+-- Detect cycle length (in button presses) of signals:
+-- ("dt", High, "cl"),
+-- ("js", High, "cl"),
+-- ("qs", High, "cl"), and
+-- ("ts", High, "cl")
+-- "cl" will send High to "rx" when these cycles all trigger at the same time
+-- that is, lcm of the cycle lengths
+
+interestingSignals :: [(String, Pulse, String)]
+interestingSignals = [("dt", High, "cl"), ("js", High, "cl"), ("qs", High, "cl"), ("ts", High, "cl")]
+
+findCycleLengths :: State SystemState [Int]
+findCycleLengths = go 1 M.empty
+  where
+    go n alreadySeen = do
+      pressButton
+      seen <- gets signalsSeen
+      modify $ \s -> s {signalsSeen = S.empty}
+      let alreadySeen' = alreadySeen `M.union` M.fromSet (const n) seen
+      if all (`M.member` alreadySeen') interestingSignals
+        then return (map (alreadySeen' !) interestingSignals)
+        else go (n + 1) alreadySeen'
+
+part2 :: Map String Module -> Int
+part2 = foldr1 lcm . evalState (populateConjunctionInputs >> findCycleLengths) . initSystemState
 
 main :: IO ()
 main = do
