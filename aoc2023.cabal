@@ -472,7 +472,10 @@ executable day24
       aoc2023,
       split,
       mtl,
-      pretty-simple
+      pretty-simple,
+      hmatrix,
+      hashable,
+      sbv
     hs-source-dirs: app
     default-language: GHC2021
 executable day25
