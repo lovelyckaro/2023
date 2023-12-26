@@ -1,5 +1,6 @@
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE OverloadedRecordDot #-}
+{-# LANGUAGE RecordWildCards #-}
 
 module Main where
 
@@ -11,6 +12,8 @@ import Data.Hashable
 import Data.List
 import Data.Map (Map)
 import Data.Map qualified as M
+import Data.Maybe
+import Data.SBV
 import GHC.Generics
 import Numeric.LinearAlgebra
 import SantaLib
@@ -88,11 +91,41 @@ maxBound = 400000000000000
 part1 :: [Line] -> Int
 part1 = sum . HM.map (length . filter (inBounds minBound maxBound)) . collisions . map to2d
 
-part2 = id
+data SLine = SLine {x, y, z, dx, dy, dz :: SReal}
+  deriving (Show)
+
+toSLine :: Line -> SLine
+toSLine Line {..} = SLine {..}
+  where
+    [x, y, z] = [fromIntegral $ round v | v <- concat (toLists p)]
+    [dx, dy, dz] = [fromIntegral $ round v | v <- concat (toLists diff)]
+
+collides :: SLine -> SLine -> Symbolic ()
+collides line1 line2 = do
+  t <- sReal "t"
+  constrain (line1.x + t * line1.dx .== line2.x + t * line2.dx)
+  constrain (line1.y + t * line1.dy .== line2.y + t * line2.dy)
+  constrain (line1.z + t * line1.dz .== line2.z + t * line2.dz)
+  constrain (t .>= 0)
+
+collideLine :: [Line] -> Symbolic ()
+collideLine lines = do
+  [x, y, z, dx, dy, dz] <- sReals ["x", "y", "z", "dx", "dy", "dz"]
+  let l = SLine {x, y, z, dx, dy, dz}
+  mapM_ (collides l . toSLine) lines
+  goal <- sReal "goal"
+  constrain (goal .== x + y + z)
+
+part2 lines = do
+  result <- sat (collideLine lines)
+  let goal :: AlgReal = fromJust $ getModelValue "goal" result
+  return goal
 
 main :: IO ()
 main = do
   inp <- getInput 24 >>= parseIO pInp "day24.input"
   -- example <- getExample 24 >>= parseIO pInp "day24-example.input"
   putAnswer 24 Part1 (part1 inp)
-  putAnswer 24 Part2 (part2 inp)
+  putAnswer 24 Part2 =<< part2 inp
+
+-- putAnswer 24 Part2 (part2 inp)
