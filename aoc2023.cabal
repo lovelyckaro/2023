@@ -492,6 +492,8 @@ executable day25
       aoc2023,
       split,
       mtl,
-      pretty-simple
+      pretty-simple,
+      fgl,
+      random
     hs-source-dirs: app
     default-language: GHC2021
